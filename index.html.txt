@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elena Vossen | Contemporary Artist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --color-cream: #FAF9F6;
+            --color-charcoal: #2C2C2C;
+            --color-gold: #C9A962;
+            --color-stone: #E5E2DD;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-cream);
+            color: var(--color-charcoal);
+            overflow-x: hidden;
+        }
+        
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        .text-gold {
+            color: var(--color-gold);
+        }
+        
+        .bg-gold {
+            background-color: var(--color-gold);
+        }
+        
+        .border-gold {
+            border-color: var(--color-gold);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-cream);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-charcoal);
+            border-radius: 4px;
+        }
+        
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Image hover effects */
+        .artwork-card {
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .artwork-card:hover {
+            transform: translateY(-8px);
+        }
+        .artwork-card img {
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .artwork-card:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Navigation blur */
+        .nav-blur {
+            backdrop-filter: blur(20px);
+            background: rgba(250, 249, 246, 0.85);
+        }
+        
+        /* Loader */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-cream);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        /* Custom cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background-color: var(--color-charcoal);
+        }
+        .cursor-outline {
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--color-charcoal);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        .cursor-outline.hover {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(201, 169, 98, 0.1);
+            border-color: var(--color-gold);
+        }
+        
+        /* Fade in animation classes */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .modal.active {
+            display: flex;
+        }
+        
+        /* Filter buttons */
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background-color: var(--color-charcoal);
+            color: var(--color-cream);
+        }
+        
+        /* Cart sidebar */
+        .cart-sidebar {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .cart-sidebar.open {
+            transform: translateX(0);
+        }
+        
+        /* Parallax hero */
+        .hero-parallax {
+            will-change: transform;
+        }
+        
+        /* Text reveal */
+        .reveal-text {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline {
+                display: none;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body class="antialiased selection:bg-gray-800 selection:text-white">
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="text-center">
+            <div class="font-serif text-4xl italic mb-4 tracking-wider">Elena Vossen</div>
+            <div class="w-32 h-px bg-gray-300 mx-auto overflow-hidden">
+                <div class="h-full bg-gray-800 w-0 transition-all duration-1000" id="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 nav-blur border-b border-gray-200/50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#home" class="font-serif text-2xl tracking-wider hover:text-gold transition-colors">Elena Vossen</a>
+                
+                <div class="hidden md:flex items-center space-x-8 text-sm tracking-widest uppercase">
+                    <a href="#collection" class="hover:text-gold transition-colors relative group">
+                        Collection
+                        <span class="absolute -bottom-1 left-0 w-0 h-px bg-gold transition-all group-hover:w-full"></span>
+                    </a>
+                    <a href="#about" class="hover:text-gold transition-colors relative group">
+                        About
+                        <span class="absolute -bottom-1 left-0 w-0 h-px bg-gold transition-all group-hover:w-full"></span>
+                    </a>
+                    <a href="#contact" class="hover:text-gold transition-colors relative group">
+                        Contact
+                        <span class="absolute -bottom-1 left-0 w-0 h-px bg-gold transition-all group-hover:w-full"></span>
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <button class="relative hover:text-gold transition-colors" onclick="toggleCart()">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-gold text-white text-xs w-5 h-5 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
+                    </button>
+                    <button class="md:hidden" onclick="toggleMobileMenu()">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="fixed inset-0 bg-cream z-40 transform translate-x-full transition-transform duration-300 md:hidden" id="mobile-menu">
+        <div class="flex flex-col items-center justify-center h-full space-y-8 text-2xl font-serif">
+            <a href="#collection" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">Collection</a>
+            <a href="#about" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">About</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">Contact</a>
+        </div>
+        <button class="absolute top-6 right-6" onclick="toggleMobileMenu()">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="fixed inset-0 bg-black/50 z-50 hidden" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-2xl overflow-y-auto" id="cart-sidebar">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-8 border-b pb-4">
+                <h2 class="font-serif text-2xl">Your Collection</h2>
+                <button onclick="toggleCart()" class="hover:text-gold transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="cart-items" class="space-y-6">
+                <!-- Cart items injected here -->
+                <div class="text-center text-gray-500 py-12">
+                    <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-4 opacity-30"></i>
+                    <p>Your collection is empty</p>
+                </div>
+            </div>
+            <div class="mt-8 pt-6 border-t">
+                <div class="flex justify-between mb-4 text-lg font-medium">
+                    <span>Total</span>
+                    <span id="cart-total">$0</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-gray-900 text-white py-4 hover:bg-gold transition-colors duration-300 tracking-widest uppercase text-sm">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen w-full overflow-hidden flex items-center justify-center">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=2545&auto=format&fit=crop" 
+                 alt="Featured Artwork" 
+                 class="hero-parallax w-full h-full object-cover opacity-90">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-cream"></div>
+        </div>
+        
+        <div class="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
+            <p class="text-sm tracking-[0.3em] uppercase mb-6 fade-up">Contemporary Abstract Artist</p>
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl leading-tight mb-8 fade-up">
+                <span class="italic">Where Color</span><br>
+                <span class="not-italic">Meets Emotion</span>
+            </h1>
+            <p class="text-lg md:text-xl font-light mb-12 max-w-2xl mx-auto leading-relaxed fade-up text-white/90">
+                Original paintings that transform spaces and evoke deep emotional resonance through abstract expressionism.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center fade-up">
+                <a href="#collection" class="px-8 py-4 bg-white text-gray-900 hover:bg-gold hover:text-white transition-all duration-300 tracking-widest uppercase text-sm">
+                    View Collection
+                </a>
+                <a href="#shop" class="px-8 py-4 border border-white text-white hover:bg-white hover:text-gray-900 transition-all duration-300 tracking-widest uppercase text-sm">
+                    Shop Originals
+                </a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i data-lucide="chevron-down" class="w-6 h-6 text-white/70"></i>
+        </div>
+    </section>
+
+    <!-- Featured Section -->
+    <section class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="fade-up">
+                <p class="text-gold text-sm tracking-[0.2em] uppercase mb-4">Featured Work</p>
+                <h2 class="font-serif text-4xl md:text-5xl mb-6 leading-tight">Ethereal Awakening</h2>
+                <p class="text-gray-600 mb-8 leading-relaxed">
+                    A monumental piece exploring the intersection of light and shadow. This work represents months of layering, 
+                    texture building, and emotional excavation. The golden hues emerge from deep blues, symbolizing hope breaking through darkness.
+                </p>
+                <div class="flex items-center gap-8 mb-8 text-sm">
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-xs">Dimensions</span>
+                        <span class="font-medium">60 × 48 inches</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-xs">Medium</span>
+                        <span class="font-medium">Oil on Canvas</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 uppercase tracking-wider text-xs">Year</span>
+                        <span class="font-medium">2024</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="font-serif text-3xl">$8,500</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 text-xs uppercase tracking-wider">Available</span>
+                </div>
+                <button onclick="addToCart('ethereal-awakening')" class="mt-8 px-8 py-3 bg-gray-900 text-white hover:bg-gold transition-colors duration-300 tracking-widest uppercase text-sm w-full md:w-auto">
+                    Acquire This Piece
+                </button>
+            </div>
+            <div class="relative fade-up">
+                <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=2538&auto=format&fit=crop" 
+                     alt="Ethereal Awakening" 
+                     class="w-full h-[600px] object-cover shadow-2xl">
+                <div class="absolute -bottom-6 -right-6 w-48 h-48 border border-gold/30 -z-10"></div>
+                <div class="absolute -top-6 -left-6 w-48 h-48 border border-gold/30 -z-10"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery / Shop Section -->
+    <section id="collection" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 fade-up">
+                <p class="text-gold text-sm tracking-[0.2em] uppercase mb-4">The Collection</p>
+                <h2 class="font-serif text-4xl md:text-5xl mb-6">Original Works</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Each piece is a unique exploration of color, texture, and emotion. 
+                All works are signed originals, ready for your space.</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12 fade-up">
+                <button class="filter-btn active px-6 py-2 border border-gray-300 text-sm tracking-wider uppercase hover:border-gray-900" data-filter="all">All Works</button>
+                <button class="filter-btn px-6 py-2 border border-gray-300 text-sm tracking-wider uppercase hover:border-gray-900" data-filter="abstract">Abstract</button>
+                <button class="filter-btn px-6 py-2 border border-gray-300 text-sm tracking-wider uppercase hover:border-gray-900" data-filter="landscape">Landscape</button>
+                <button class="filter-btn px-6 py-2 border border-gray-300 text-sm tracking-wider uppercase hover:border-gray-900" data-filter="portrait">Portrait</button>
+                <button class="filter-btn px-6 py-2 border border-gray-300 text-sm tracking-wider uppercase hover:border-gray-900" data-filter="available">Available</button>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="gallery-grid">
+                <!-- Artworks injected via JavaScript -->
+            </div>
+            
+            <div class="text-center mt-16">
+                <button class="px-8 py-3 border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 tracking-widest uppercase text-sm">
+                    Load More Works
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 bg-stone-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="relative fade-up order-2 lg:order-1">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop" 
+                         alt="Elena Vossen" 
+                         class="w-full h-[700px] object-cover grayscale hover:grayscale-0 transition-all duration-700">
+                    <div class="absolute bottom-8 left-8 bg-white p-6 shadow-xl max-w-xs">
+                        <p class="font-serif text-xl italic mb-2">"Art is the highest form of hope."</p>
+                        <p class="text-sm text-gray-500">— Gerhard Richter</p>
+                    </div>
+                </div>
+                
+                <div class="order-1 lg:order-2 fade-up">
+                    <p class="text-gold text-sm tracking-[0.2em] uppercase mb-4">The Artist</p>
+                    <h2 class="font-serif text-4xl md:text-5xl mb-8">Elena Vossen</h2>
+                    
+                    <div class="space-y-6 text-gray-600 leading-relaxed">
+                        <p>
+                            Based in the Hudson Valley, I create contemporary abstract paintings that explore the emotional 
+                            resonance of color and texture. My work is deeply influenced by the changing seasons of upstate New York, 
+                            the raw energy of urban environments, and the quiet moments of introspection that define our human experience.
+                        </p>
+                        <p>
+                            With a background in architecture and fine arts from RISD, I approach each canvas as a spatial problem— 
+                            balancing negative space with explosive color, geometric structure with organic flow. My process involves 
+                            building up layers over weeks or months, then selectively revealing or obscuring elements to create depth 
+                            and history within the surface.
+                        </p>
+                        <p>
+                            My work has been featured in Architectural Digest, collected by designers across the US and Europe, 
+                            and exhibited in galleries from Manhattan to Berlin. Each piece is created with museum-quality materials 
+                            designed to last generations.
+                        </p>
+                    </div>
+
+                    <div class="mt-12 grid grid-cols-3 gap-8 border-t pt-8">
+                        <div>
+                            <span class="block font-serif text-3xl mb-1">12+</span>
+                            <span class="text-xs uppercase tracking-wider text-gray-500">Years Active</span>
+                        </div>
+                        <div>
+                            <span class="block font-serif text-3xl mb-1">200+</span>
+                            <span class="text-xs uppercase tracking-wider text-gray-500">Works Sold</span>
+                        </div>
+                        <div>
+                            <span class="block font-serif text-3xl mb-1">15</span>
+                            <span class="text-xs uppercase tracking-wider text-gray-500">Exhibitions</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-12">
+                        <h3 class="font-serif text-2xl mb-4">Selected Exhibitions</h3>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex justify-between border-b border-gray-200 pb-2">
+                                <span>Solo Show, Gallery 42, New York</span>
+                                <span class="text-gray-500">2024</span>
+                            </li>
+                            <li class="flex justify-between border-b border-gray-200 pb-2">
+                                <span>Group Exhibition, Art Basel Miami</span>
+                                <span class="text-gray-500">2023</span>
+                            </li>
+                            <li class="flex justify-between border-b border-gray-200 pb-2">
+                                <span>Contemporary Abstractions, Berlin</span>
+                                <span class="text-gray-500">2023</span>
+                            </li>
+                            <li class="flex justify-between border-b border-gray-200 pb-2">
+                                <span>Emerging Voices, SFMOMA</span>
+                                <span class="text-gray-500">2022</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-24 bg-gray-900 text-white">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <i data-lucide="quote" class="w-12 h-12 text-gold mx-auto mb-8 opacity-50"></i>
+            <div class="relative overflow-hidden" id="testimonial-slider">
+                <div class="transition-all duration-500" id="testimonial-content">
+                    <p class="font-serif text-2xl md:text-4xl leading-relaxed mb-8 italic">
+                        "Elena's work transformed our living room. The piece has become a conversation starter 
+                        and brings a sense of calm and sophistication that we didn't know we were missing."
+                    </p>
+                    <p class="text-gold tracking-widest uppercase text-sm">— Sarah Chen, Interior Designer, Brooklyn</p>
+                </div>
+            </div>
+            <div class="flex justify-center gap-2 mt-12">
+                <button onclick="changeTestimonial(0)" class="w-2 h-2 rounded-full bg-white/30 hover:bg-gold transition-colors testimonial-dot active"></button>
+                <button onclick="changeTestimonial(1)" class="w-2 h-2 rounded-full bg-white/30 hover:bg-gold transition-colors testimonial-dot"></button>
+                <button onclick="changeTestimonial(2)" class="w-2 h-2 rounded-full bg-white/30 hover:bg-gold transition-colors testimonial-dot"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16">
+                <div class="fade-up">
+                    <p class="text-gold text-sm tracking-[0.2em] uppercase mb-4">Get in Touch</p>
+                    <h2 class="font-serif text-4xl md:text-5xl mb-6">Start Your Collection</h2>
+                    <p class="text-gray-600 mb-12 leading-relaxed">
+                        Whether you're interested in a specific piece, commissioning a custom work, or simply 
+                        want to learn more about my process, I'd love to hear from you.
+                    </p>
+
+                    <div class="space-y-6 mb-12">
+                        <div class="flex items-start gap-4">
+                            <i data-lucide="mail" class="w-5 h-5 text-gold mt-1"></i>
+                            <div>
+                                <p class="font-medium mb-1">Email</p>
+                                <a href="mailto:studio@elenavossen.com" class="text-gray-600 hover:text-gold transition-colors">studio@elenavossen.com</a>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-gold mt-1"></i>
+                            <div>
+                                <p class="font-medium mb-1">Studio</p>
+                                <p class="text-gray-600">Hudson Valley, New York<br>By appointment only</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <i data-lucide="instagram" class="w-5 h-5 text-gold mt-1"></i>
+                            <div>
+                                <p class="font-medium mb-1">Social</p>
+                                <a href="#" class="text-gray-600 hover:text-gold transition-colors">@elenavossen.art</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="bg-stone-50 p-8">
+                        <h3 class="font-serif text-2xl mb-4">Studio Newsletter</h3>
+                        <p class="text-sm text-gray-600 mb-4">Be the first to know about new works and exhibitions.</p>
+                        <form onsubmit="handleNewsletter(event)" class="flex gap-2">
+                            <input type="email" placeholder="Your email" required 
+                                   class="flex-1 px-4 py-3 border border-gray-300 focus:outline-none focus:border-gold bg-white">
+                            <button type="submit" class="px-6 py-3 bg-gray-900 text-white hover:bg-gold transition-colors">
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="fade-up">
+                    <form onsubmit="handleContact(event)" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2">First Name</label>
+                                <input type="text" required class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gold bg-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2">Last Name</label>
+                                <input type="text" required class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gold bg-transparent">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2">Email</label>
+                            <input type="email" required class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gold bg-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2">Interest</label>
+                            <select class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gold bg-transparent">
+                                <option>Purchasing a specific artwork</option>
+                                <option>Commission inquiry</option>
+                                <option>Studio visit</option>
+                                <option>Press/Media</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 mb-2">Message</label>
+                            <textarea rows="5" required class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-gold bg-transparent resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-gray-900 text-white hover:bg-gold transition-colors duration-300 tracking-widest uppercase text-sm">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="md:col-span-2">
+                    <h3 class="font-serif text-3xl mb-4">Elena Vossen</h3>
+                    <p class="text-gray-400 max-w-md leading-relaxed">
+                        Contemporary abstract paintings for collectors and spaces that demand emotional depth 
+                        and visual sophistication.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-sm uppercase tracking-widest mb-4 text-gold">Explore</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#collection" class="hover:text-white transition-colors">Collection</a></li>
+                        <li><a href="#about" class="hover:text-white transition-colors">About</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Shipping & Returns</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm uppercase tracking-widest mb-4 text-gold">Connect</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 border border-gray-700 flex items-center justify-center hover:border-gold hover:text-gold transition-all">
+                            <i data-lucide="instagram" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 border border-gray-700 flex items-center justify-center hover:border-gold hover:text-gold transition-all">
+                            <i data-lucide="twitter" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 border border-gray-700 flex items-center justify-center hover:border-gold hover:text-gold transition-all">
+                            <i data-lucide="linkedin" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; 2024 Elena Vossen. All rights reserved.</p>
+                <div class="flex gap-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Artwork Modal -->
+    <div class="modal" id="artwork-modal" onclick="closeModal(event)">
+        <div class="w-full max-w-6xl mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-8 items-center" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-white hover:text-gold transition-colors">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            
+            <div class="w-full md:w-2/3">
+                <img id="modal-image" src="" alt="" class="w-full max-h-[80vh] object-contain">
+            </div>
+            
+            <div class="w-full md:w-1/3 text-white">
+                <span id="modal-category" class="text-gold text-sm tracking-widest uppercase mb-2 block"></span>
+                <h2 id="modal-title" class="font-serif text-4xl mb-4"></h2>
+                <p id="modal-description" class="text-gray-300 mb-6 leading-relaxed"></p>
+                
+                <div class="space-y-3 mb-8 text-sm">
+                    <div class="flex justify-between border-b border-gray-700 pb-2">
+                        <span class="text-gray-400">Dimensions</span>
+                        <span id="modal-dimensions"></span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-2">
+                        <span class="text-gray-400">Medium</span>
+                        <span id="modal-medium"></span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-2">
+                        <span class="text-gray-400">Year</span>
+                        <span id="modal-year"></span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-700 pb-2">
+                        <span class="text-gray-400">Availability</span>
+                        <span id="modal-status" class="text-green-400"></span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between mb-8">
+                    <span id="modal-price" class="font-serif text-3xl"></span>
+                    <span id="modal-availability" class="px-3 py-1 bg-green-500/20 text-green-400 text-xs uppercase tracking-wider rounded"></span>
+                </div>
+                
+                <button id="modal-add-to-cart" class="w-full py-4 bg-white text-gray-900 hover:bg-gold hover:text-white transition-colors duration-300 tracking-widest uppercase text-sm font-medium">
+                    Add to Collection
+                </button>
+                
+                <button class="w-full mt-4 py-4 border border-white text-white hover:bg-white hover:text-gray-900 transition-colors duration-300 tracking-widest uppercase text-sm">
+                    Inquire About This Piece
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Artwork Data
+        const artworks = [
+            {
+                id: 'midnight-garden',
+                title: 'Midnight Garden',
+                category: 'abstract',
+                price: 4500,
+                dimensions: '36 × 36 inches',
+                medium: 'Acrylic and Gold Leaf on Canvas',
+                year: '2024',
+                image: 'https://images.unsplash.com/photo-1549887534-1541e9326642?q=80&w=2530&auto=format&fit=crop',
+                description: 'A nocturnal exploration of botanical forms, where deep indigos and blacks are punctuated by metallic gold accents that catch the light like moonlit petals.',
+                available: true,
+                limited: false
+            },
+            {
+                id: 'coastal-memory',
+                title: 'Coastal Memory',
+                category: 'landscape',
+                price: 6200,
+                dimensions: '48 × 60 inches',
+                medium: 'Oil on Linen',
+                year: '2024',
+                image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=2519&auto=format&fit=crop',
+                description: 'Inspired by the foggy mornings of the Pacific Northwest, this piece captures the ephemeral quality of light on water through layers of translucent glazes.',
+                available: true,
+                limited: false
+            },
+            {
+                id: 'urban-geometry',
+                title: 'Urban Geometry',
+                category: 'abstract',
+                price: 3800,
+                dimensions: '30 × 40 inches',
+                medium: 'Mixed Media on Panel',
+                year: '2023',
+                image: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=2576&auto=format&fit=crop',
+                description: 'The chaos and order of city life rendered in sharp angles and unexpected color combinations. Concrete textures meet vibrant street art influences.',
+                available: true,
+                limited: false
+            },
+            {
+                id: 'silent-dialogue',
+                title: 'Silent Dialogue',
+                category: 'portrait',
+                price: 7800,
+                dimensions: '40 × 50 inches',
+                medium: 'Oil and Charcoal on Canvas',
+                year: '2024',
+                image: 'https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?q=80&w=2574&auto=format&fit=crop',
+                description: 'An intimate portrait that explores the space between words. The subject seems caught in a moment of profound realization, eyes directed just beyond the viewer.',
+                available: false,
+                limited: true
+            },
+            {
+                id: 'autumn-requiem',
+                title: 'Autumn Requiem',
+                category: 'landscape',
+                price: 5200,
+                dimensions: '36 × 48 inches',
+                medium: 'Oil on Canvas',
+                year: '2023',
+                image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=2545&auto=format&fit=crop',
+                description: 'The final blaze of glory before winter. Burnt oranges and deep crimsons dance across the canvas in thick impasto strokes that catch dramatic shadows.',
+                available: true,
+                limited: false
+            },
+            {
+                id: 'ethereal-awakening',
+                title: 'Ethereal Awakening',
+                category: 'abstract',
+                price: 8500,
+                dimensions: '60 × 48 inches',
+                medium: 'Oil on Canvas',
+                year: '2024',
+                image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=2538&auto=format&fit=crop',
+                description: 'A monumental piece exploring the intersection of light and shadow. This work represents months of layering, texture building, and emotional excavation.',
+                available: true,
+                limited: false
+            }
+        ];
+
+        // Cart State
+        let cart = [];
+
+        // Testimonials
+        const testimonials = [
+            {
+                text: "Elena's work transformed our living room. The piece has become a conversation starter and brings a sense of calm and sophistication that we didn't know we were missing.",
+                author: "Sarah Chen, Interior Designer, Brooklyn"
+            },
+            {
+                text: "I commissioned a custom piece for my office, and the process was incredible. Elena understood my vision perfectly and delivered something beyond my expectations.",
+                author: "Michael Torres, Architect, San Francisco"
+            },
+            {
+                text: "The texture and depth in these paintings need to be seen in person. Photos don't do justice to the way the light plays across the surface throughout the day.",
+                author: "Emma Laurent, Art Collector, Paris"
+            }
+        ];
+
+        let currentTestimonial = 0;
+
+        // Loader
+        window.addEventListener('load', () => {
+            const loaderBar = document.getElementById('loader-bar');
+            loaderBar.style.width = '100%';
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                initAnimations();
+            }, 1000);
+        });
+
+        // Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover effects for cursor
+        document.querySelectorAll('a, button, .artwork-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursorOutline.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hover'));
+        });
+
+        // Initialize Gallery
+        function renderGallery(filter = 'all') {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+            
+            const filtered = filter === 'all' ? artworks : 
+                           filter === 'available' ? artworks.filter(a => a.available) :
+                           artworks.filter(a => a.category === filter);
+            
+            filtered.forEach((artwork, index) => {
+                const card = document.createElement('div');
+                card.className = 'artwork-card group cursor-pointer fade-up';
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.onclick = () => openModal(artwork);
+                
+                card.innerHTML = `
+                    <div class="relative overflow-hidden mb-4 bg-gray-100 aspect-[4/5]">
+                        <img src="${artwork.image}" alt="${artwork.title}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <span class="text-white tracking-widest uppercase text-sm border border-white px-6 py-3">View Details</span>
+                        </div>
+                        ${!artwork.available ? '<span class="absolute top-4 left-4 bg-gray-900 text-white text-xs px-3 py-1 uppercase tracking-wider">Sold</span>' : ''}
+                        ${artwork.limited ? '<span class="absolute top-4 right-4 bg-gold text-white text-xs px-3 py-1 uppercase tracking-wider">Only 1 Left</span>' : ''}
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-serif text-xl mb-1 group-hover:text-gold transition-colors">${artwork.title}</h3>
+                            <p class="text-sm text-gray-500">${artwork.medium}</p>
+                        </div>
+                        <span class="font-medium">${artwork.available ? '$' + artwork.price.toLocaleString() : 'Inquire'}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            // Re-initialize hover effects
+            document.querySelectorAll('.artwork-card').forEach(el => {
+                el.addEventListener('mouseenter', () => cursorOutline.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hover'));
+            });
+        }
+
+        renderGallery();
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                renderGallery(e.target.dataset.filter);
+            });
+        });
+
+        // Modal Functions
+        function openModal(artwork) {
+            document.getElementById('modal-image').src = artwork.image;
+            document.getElementById('modal-category').textContent = artwork.category;
+            document.getElementById('modal-title').textContent = artwork.title;
+            document.getElementById('modal-description').textContent = artwork.description;
+            document.getElementById('modal-dimensions').textContent = artwork.dimensions;
+            document.getElementById('modal-medium').textContent = artwork.medium;
+            document.getElementById('modal-year').textContent = artwork.year;
+            document.getElementById('modal-price').textContent = '$' + artwork.price.toLocaleString();
+            
+            const statusEl = document.getElementById('modal-status');
+            const availabilityEl = document.getElementById('modal-availability');
+            const addBtn = document.getElementById('modal-add-to-cart');
+            
+            if (artwork.available) {
+                statusEl.textContent = 'Available';
+                availabilityEl.textContent = 'In Stock';
+                availabilityEl.className = 'px-3 py-1 bg-green-500/20 text-green-400 text-xs uppercase tracking-wider rounded';
+                addBtn.style.display = 'block';
+                addBtn.onclick = () => {
+                    addToCart(artwork.id);
+                    closeModal();
+                };
+            } else {
+                statusEl.textContent = 'Sold';
+                availabilityEl.textContent = 'Commission Available';
+                availabilityEl.className = 'px-3 py-1 bg-yellow-500/20 text-yellow-400 text-xs uppercase tracking-wider rounded';
+                addBtn.style.display = 'none';
+            }
+            
+            document.getElementById('artwork-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('artwork-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function closeModal(event) {
+            if (event.target === event.currentTarget) {
+                closeModal();
+            }
+        }
+
+        // Cart Functions
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+            document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+        }
+
+        function addToCart(artworkId) {
+            const artwork = artworks.find(a => a.id === artworkId);
+            if (!artwork || !artwork.available) return;
+            
+            const existing = cart.find(item => item.id === artworkId);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({ ...artwork, quantity: 1 });
+            }
+            
+            updateCartUI();
+            toggleCart();
+        }
+
+        function removeFromCart(artworkId) {
+            cart = cart.filter(item => item.id !== artworkId);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const countEl = document.getElementById('cart-count');
+            countEl.textContent = count;
+            countEl.style.opacity = count > 0 ? '1' : '0';
+            
+            const itemsContainer = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 py-12">
+                        <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-4 opacity-30"></i>
+                        <p>Your collection is empty</p>
+                    </div>
+                `;
+                totalEl.textContent = '$0';
+            } else {
+                itemsContainer.innerHTML = cart.map(item => `
+                    <div class="flex gap-4">
+                        <img src="${item.image}" class="w-20 h-24 object-cover">
+                        <div class="flex-1">
+                            <h4 class="font-serif text-lg">${item.title}</h4>
+                            <p class="text-sm text-gray-500 mb-2">${item.medium}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm">Qty: ${item.quantity}</span>
+                                <span class="font-medium">$${(item.price * item.quantity).toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 transition-colors">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                totalEl.textContent = '$' + total.toLocaleString();
+            }
+            
+            lucide.createIcons();
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+            alert('Proceeding to secure checkout...\n\nIn a production environment, this would integrate with Stripe or PayPal.');
+        }
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('translate-x-full');
+        }
+
+        // Testimonial Slider
+        function changeTestimonial(index) {
+            currentTestimonial = index;
+            const content = document.getElementById('testimonial-content');
+            const dots = document.querySelectorAll('.testimonial-dot');
+            
+            content.style.opacity = '0';
+            content.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                content.innerHTML = `
+                    <p class="font-serif text-2xl md:text-4xl leading-relaxed mb-8 italic">
+                        "${testimonials[index].text}"
+                    </p>
+                    <p class="text-gold tracking-widest uppercase text-sm">— ${testimonials[index].author}</p>
+                `;
+                content.style.opacity = '1';
+                content.style.transform = 'translateY(0)';
+            }, 300);
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+                dot.style.backgroundColor = i === index ? '#C9A962' : 'rgba(255,255,255,0.3)';
+            });
+        }
+
+        // Form Handlers
+        function handleContact(e) {
+            e.preventDefault();
+            alert('Thank you for your message. I will respond within 24-48 hours.');
+            e.target.reset();
+        }
+
+        function handleNewsletter(e) {
+            e.preventDefault();
+            alert('Welcome to the studio. Check your email for a confirmation.');
+            e.target.reset();
+        }
+
+        // GSAP Animations
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Hero parallax
+            gsap.to('.hero-parallax', {
+                yPercent: 30,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#home",
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+            
+            // Fade up elements
+            gsap.utils.toArray('.fade-up').forEach(element => {
+                gsap.fromTo(element, 
+                    { opacity: 0, y: 30 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 85%",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+        }
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                navbar.classList.add('shadow-sm');
+            } else {
+                navbar.classList.remove('shadow-sm');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Auto-advance testimonials
+        setInterval(() => {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            changeTestimonial(currentTestimonial);
+        }, 6000);
+    </script>
+</body>
+</html>
